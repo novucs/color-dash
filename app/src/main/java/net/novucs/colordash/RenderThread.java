@@ -67,7 +67,6 @@ public class RenderThread extends Thread {
     }
 
     private void render(Canvas canvas, Set<Obstacle.Snapshot> obstacles) {
-        paint.setColor(Color.BLUE);
         for (Obstacle.Snapshot obstacle : obstacles) {
             render(canvas, obstacle);
         }
@@ -78,6 +77,8 @@ public class RenderThread extends Thread {
         float top = obstacle.getLocation().getY();
         float right = left + obstacle.getWidth();
         float bottom = top + obstacle.getHeight();
+
+        paint.setColor(obstacle.getColor());
         canvas.drawRect(left, top, right, bottom, paint);
     }
 }
