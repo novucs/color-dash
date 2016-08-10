@@ -25,6 +25,7 @@ public class MechanicsThread extends Thread {
 
     @Override
     public void run() {
+        long tick = 0;
         long tickStart;
         long tickDuration;
 
@@ -34,6 +35,7 @@ public class MechanicsThread extends Thread {
             // Pass current tick snapshot to render thread.
             GameSnapshot snapshot = new GameSnapshot();
             colorDash.getRenderThread().setSnapshot(snapshot);
+            System.out.println(tick++);
 
             tickDuration = System.currentTimeMillis() - tickStart;
 

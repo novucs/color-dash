@@ -11,14 +11,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public GamePanel(ColorDash colorDash) {
         super(colorDash);
         this.colorDash = colorDash;
+    }
+
+    public void initialize() {
         getHolder().addCallback(this);
         setFocusable(true);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        colorDash.getMechanicsThread().start();
-        colorDash.getRenderThread().start();
+        colorDash.getMechanicsThread().initialize();
+        colorDash.getRenderThread().initialize();
     }
 
     @Override

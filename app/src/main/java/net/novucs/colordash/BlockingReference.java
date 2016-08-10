@@ -27,7 +27,7 @@ public class BlockingReference<T> {
      * Sets the reference and informs any threads waiting to take.
      * @param reference the new reference.
      */
-    public void set(T reference) {
+    public synchronized void set(T reference) {
         this.reference = reference;
         notify();
     }
