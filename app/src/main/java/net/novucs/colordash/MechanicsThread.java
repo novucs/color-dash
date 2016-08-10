@@ -5,11 +5,13 @@ import net.novucs.colordash.math.Vector2f;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MechanicsThread extends Thread {
 
     private static final int TPS = 30;
+    private static final int NORMAL_TICK_DURATION = (int) TimeUnit.SECONDS.toMillis(1) / TPS;
 
     private final ColorDash colorDash;
     private final AtomicBoolean running = new AtomicBoolean();
@@ -65,9 +67,9 @@ public class MechanicsThread extends Thread {
 
             tickDuration = System.currentTimeMillis() - tickStart;
 
-            if (TPS > tickDuration) {
+            if (NORMAL_TICK_DURATION > tickDuration) {
                 try {
-                    sleep(TPS - tickDuration);
+                    sleep(NORMAL_TICK_DURATION - tickDuration);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
