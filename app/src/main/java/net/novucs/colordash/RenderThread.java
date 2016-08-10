@@ -23,7 +23,7 @@ public class RenderThread extends Thread {
     }
 
     public void setSnapshot(GameSnapshot snapshot) {
-        this.snapshot.update(snapshot);
+        this.snapshot.set(snapshot);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class RenderThread extends Thread {
             GameSnapshot snapshot;
 
             try {
-                snapshot = this.snapshot.retrieve();
+                snapshot = this.snapshot.take();
             } catch (InterruptedException e) {
-                throw new RuntimeException("Failed to retrieve a snapshot", e);
+                throw new RuntimeException("Failed to take a snapshot", e);
             }
 
             // TODO: Render the game snapshot here...

@@ -2,7 +2,7 @@ package net.novucs.colordash;
 
 /**
  * Allows safe asynchronous passing of immutable variables.
- * @param <T>
+ * @param <T> the reference type.
  */
 public class BlockingReference<T> {
 
@@ -13,7 +13,7 @@ public class BlockingReference<T> {
      * @return the next valid reference.
      * @throws InterruptedException
      */
-    public T retrieve() throws InterruptedException {
+    public synchronized T take() throws InterruptedException {
         if (reference == null) {
             wait();
         }
@@ -24,10 +24,10 @@ public class BlockingReference<T> {
     }
 
     /**
-     * Updates the reference.
+     * Sets the reference and informs any threads waiting to take.
      * @param reference the new reference.
      */
-    public void update(T reference) {
+    public void set(T reference) {
         this.reference = reference;
         notify();
     }
