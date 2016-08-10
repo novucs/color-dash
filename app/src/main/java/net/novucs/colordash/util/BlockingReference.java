@@ -1,4 +1,4 @@
-package net.novucs.colordash;
+package net.novucs.colordash.util;
 
 /**
  * Allows safe asynchronous passing of immutable variables.
