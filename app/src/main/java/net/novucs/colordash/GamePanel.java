@@ -17,7 +17,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
+        colorDash.getMechanicsThread().start();
+        colorDash.getRenderThread().start();
     }
 
     @Override
