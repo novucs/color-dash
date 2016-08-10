@@ -57,7 +57,7 @@ public class RenderThread extends Thread {
 
         // Wipe with white color.
         paint.reset();
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
 
@@ -67,7 +67,7 @@ public class RenderThread extends Thread {
     }
 
     private void render(Canvas canvas, Set<Obstacle.Snapshot> obstacles) {
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLUE);
         for (Obstacle.Snapshot obstacle : obstacles) {
             render(canvas, obstacle);
         }

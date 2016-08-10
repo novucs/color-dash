@@ -87,7 +87,7 @@ public class MechanicsThread extends Thread {
         float x = 0;
         float y = this.height * 0.10f;
         float width = this.width * 0.25f;
-        float height = this.height * 0.05f;
+        float height = this.height * 0.01f;
         return new Obstacle(this, new Vector2f(x, y), width, height);
     }
 
