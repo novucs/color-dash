@@ -38,6 +38,10 @@ public class Obstacle {
         this.location = location;
     }
 
+    public void tick() {
+        location = location.add(0, 10);
+    }
+
     public Snapshot snapshot() {
         return new Snapshot(width, height, location.clone());
     }

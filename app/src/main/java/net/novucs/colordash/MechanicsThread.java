@@ -22,6 +22,14 @@ public class MechanicsThread extends Thread {
         this.colorDash = colorDash;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public void initialize() {
         width = colorDash.getGamePanel().getWidth();
         height = colorDash.getGamePanel().getHeight();
@@ -43,6 +51,8 @@ public class MechanicsThread extends Thread {
         while (running.get()) {
             tickStart = System.currentTimeMillis();
 
+            tick();
+
             // Pass current tick snapshot to render thread.
             colorDash.getRenderThread().setSnapshot(snapshot());
 
@@ -58,11 +68,17 @@ public class MechanicsThread extends Thread {
         }
     }
 
+    private void tick() {
+        for (Obstacle obstacle : obstacles) {
+            obstacle.tick();
+        }
+    }
+
     private Obstacle createObstacle() {
-        float width = this.width * 0.10f;
+        float width = this.width * 0.25f;
         float height = this.height * 0.05f;
-        float x = this.width * 0.10f;
-        float y = this.width * 0.10f;
+        float x = 0;
+        float y = this.height * 0.10f;
         return new Obstacle(width, height, new Vector2f(x, y));
     }
 
