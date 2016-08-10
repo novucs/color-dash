@@ -1,17 +1,17 @@
 package net.novucs.colordash.entity;
 
+import net.novucs.colordash.MechanicsThread;
 import net.novucs.colordash.math.Vector2f;
 
-public class Obstacle {
+public class Obstacle extends Entity {
 
     private float width;
     private float height;
-    private Vector2f location;
 
-    public Obstacle(float width, float height, Vector2f location) {
+    public Obstacle(MechanicsThread mechanicsThread, Vector2f location, float width, float height) {
+        super(mechanicsThread, location);
         this.width = width;
         this.height = height;
-        this.location = location;
     }
 
     public float getWidth() {
@@ -30,32 +30,26 @@ public class Obstacle {
         this.height = height;
     }
 
-    public Vector2f getLocation() {
-        return location;
-    }
-
-    public void setLocation(Vector2f location) {
-        this.location = location;
-    }
-
+    @Override
     public void tick() {
-        location = location.add(0, 10);
+        float distance = getMechanicsThread().getHeight() * getMechanicsThread().getGameSpeed() * 0.002f;
+        setLocation(getLocation().add(0, distance));
     }
 
+    @Override
     public Snapshot snapshot() {
-        return new Snapshot(width, height, location.clone());
+        return new Snapshot(getLocation().clone(), width, height);
     }
 
-    public final class Snapshot {
+    public final class Snapshot extends Entity.Snapshot {
 
         private final float width;
         private final float height;
-        private final Vector2f location;
 
-        private Snapshot(float width, float height, Vector2f location) {
+        Snapshot(Vector2f location, float width, float height) {
+            super(location);
             this.width = width;
             this.height = height;
-            this.location = location;
         }
 
         public float getWidth() {
@@ -64,10 +58,6 @@ public class Obstacle {
 
         public float getHeight() {
             return height;
-        }
-
-        public Vector2f getLocation() {
-            return location;
         }
     }
 }
