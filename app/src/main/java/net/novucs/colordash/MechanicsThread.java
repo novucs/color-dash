@@ -67,7 +67,7 @@ public class MechanicsThread extends Thread {
     }
 
     private GameSnapshot snapshot() {
-        Set<Obstacle.Snapshot> obstacles = new HashSet<>();
+        Set<Obstacle.Snapshot> obstacles = new HashSet<>(this.obstacles.size());
         for (Obstacle obstacle : this.obstacles) {
             obstacles.add(obstacle.snapshot());
         }

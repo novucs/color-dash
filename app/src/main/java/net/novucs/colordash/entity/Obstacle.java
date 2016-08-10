@@ -48,7 +48,7 @@ public class Obstacle {
         private final float height;
         private final Vector2f location;
 
-        public Snapshot(float width, float height, Vector2f location) {
+        private Snapshot(float width, float height, Vector2f location) {
             this.width = width;
             this.height = height;
             this.location = location;

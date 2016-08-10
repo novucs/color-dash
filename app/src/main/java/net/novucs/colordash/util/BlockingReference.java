@@ -14,7 +14,7 @@ public class BlockingReference<T> {
      * @throws InterruptedException
      */
     public synchronized T take() throws InterruptedException {
-        if (reference == null) {
+        while (reference == null) {
             wait();
         }
 
