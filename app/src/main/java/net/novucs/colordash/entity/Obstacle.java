@@ -1,8 +1,5 @@
 package net.novucs.colordash.entity;
 
-import android.graphics.Color;
-import android.graphics.Paint;
-
 import net.novucs.colordash.MechanicsThread;
 import net.novucs.colordash.math.Vector2f;
 
