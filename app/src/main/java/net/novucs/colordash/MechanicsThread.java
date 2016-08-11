@@ -61,14 +61,20 @@ public class MechanicsThread extends Thread {
         long tickStart;
         long tickDuration;
 
-        obstacles.add(createObstacle());
+        int spawnCount = 0;
 
         while (running.get()) {
             tickStart = System.currentTimeMillis();
 
-            gameSpeed *= 1.00001f;
+            gameSpeed *= 1.005f;
 
             tick();
+
+            spawnCount++;
+            if(spawnCount == 60){
+                obstacles.add(createObstacle());
+                spawnCount = 0;
+            }
 
             // Pass current tick snapshot to render thread.
             colorDash.getRenderThread().setSnapshot(snapshot());
@@ -93,9 +99,9 @@ public class MechanicsThread extends Thread {
 
     private Obstacle createObstacle() {
         float x = 0;
-        float y = this.height * 0.10f;
+        float y = 0;
         float width = this.width * 0.25f;
-        float height = this.height * 0.01f;
+        float height = this.height * 0.03f;
         colorTracker++;
         if(colorTracker == 20) {
             if(nextColor == 4) {
