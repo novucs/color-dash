@@ -66,7 +66,7 @@ public class MechanicsThread extends Thread {
         while (running.get()) {
             tickStart = System.currentTimeMillis();
 
-            gameSpeed *= 1.005f;
+            gameSpeed *=1.0000001;
 
             tick();
 
@@ -103,7 +103,7 @@ public class MechanicsThread extends Thread {
         float width = this.width * 0.25f;
         float height = this.height * 0.03f;
         colorTracker++;
-        if(colorTracker == 20) {
+        if(colorTracker == 2) {
             if(nextColor == 4) {
                 nextColor = 0;
             } else {
