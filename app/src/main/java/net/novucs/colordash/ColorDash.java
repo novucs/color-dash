@@ -9,7 +9,7 @@ public class ColorDash extends Activity {
 
     private final MechanicsThread mechanicsThread = new MechanicsThread(this);
     private final RenderThread renderThread = new RenderThread(this);
-    private GamePanel gamePanel;
+    private GamePanel panel;
 
     public MechanicsThread getMechanicsThread() {
         return mechanicsThread;
@@ -19,8 +19,8 @@ public class ColorDash extends Activity {
         return renderThread;
     }
 
-    public GamePanel getGamePanel() {
-        return gamePanel;
+    public GamePanel getPanel() {
+        return panel;
     }
 
     @Override
@@ -31,8 +31,7 @@ public class ColorDash extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        gamePanel = new GamePanel(this);
-        gamePanel.initialize();
-        setContentView(gamePanel);
+        panel = new GamePanel(this);
+        setContentView(panel);
     }
 }

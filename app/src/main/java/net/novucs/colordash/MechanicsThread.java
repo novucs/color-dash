@@ -1,57 +1,60 @@
 package net.novucs.colordash;
 
-import android.graphics.Color;
+import com.google.common.collect.ImmutableMultimap;
 
+import net.novucs.colordash.entity.Entity;
+import net.novucs.colordash.entity.EntityType;
 import net.novucs.colordash.entity.Obstacle;
-import net.novucs.colordash.math.Vector2f;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MechanicsThread extends Thread {
+public class MechanicsThread extends Thread implements GameService, Tickable {
 
+    // Target ticks per second.
     private static final int TPS = 30;
+
+    // Duration in millis a tick should last, calculated from the TPS.
     private static final int NORMAL_TICK_DURATION = (int) TimeUnit.SECONDS.toMillis(1) / TPS;
 
-    private final ColorDash colorDash;
+    // How much the game speed should be multiplied by each tick.
+    private static final float GAME_SPEED_MULTIPLIER = 1.0001f;
+
+    // The maximum speed the game can hit.
+    private static final float MAX_GAME_SPEED = 5;
+
+    // The default game speed.
+    private static final float DEFAULT_GAME_SPEED = 1;
+
+    private final ColorDash game;
     private final AtomicBoolean running = new AtomicBoolean();
-    private final Set<Obstacle> obstacles = new HashSet<>();
-    private float gameSpeed = 1.0f;
-    private int width;
-    private int height;
+    private final Map<EntityType, Entity.Manager> entityManagers = new EnumMap<>(EntityType.class);
 
-    private int[] colors = {Color.parseColor("#FF0000"), Color.parseColor("#FF00EF"), Color.parseColor("#3FE0FF"), Color.parseColor("#3FFF72"), Color.parseColor("#FFDE00")};
-    private int nextColor;
-    private int colorTracker;
+    private float gameSpeed;
 
-    public MechanicsThread(ColorDash colorDash) {
+    public MechanicsThread(ColorDash game) {
         super("mechanics-thread");
-        this.colorDash = colorDash;
+        this.game = game;
     }
 
+    /**
+     * Returns the game speed, this should affect all entity movement speeds.
+     *
+     * @return the game speed.
+     */
     public float getGameSpeed() {
         return gameSpeed;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
+    @Override
     public void initialize() {
-        width = colorDash.getGamePanel().getWidth();
-        height = colorDash.getGamePanel().getHeight();
         running.set(true);
         start();
-        nextColor = 0;
-        colorTracker = 0;
     }
 
+    @Override
     public void terminate() {
         running.set(false);
     }
@@ -61,23 +64,16 @@ public class MechanicsThread extends Thread {
         long tickStart;
         long tickDuration;
 
-        int spawnCount = 0;
+        setup();
 
         while (running.get()) {
             tickStart = System.currentTimeMillis();
 
-            gameSpeed *=1.0000001;
-
+            // Perform the game mechanics tick.
             tick();
 
-            spawnCount++;
-            if(spawnCount == 60){
-                obstacles.add(createObstacle());
-                spawnCount = 0;
-            }
-
             // Pass current tick snapshot to render thread.
-            colorDash.getRenderThread().setSnapshot(snapshot());
+            game.getRenderThread().setSnapshot(snapshot());
 
             tickDuration = System.currentTimeMillis() - tickStart;
 
@@ -89,37 +85,75 @@ public class MechanicsThread extends Thread {
                 }
             }
         }
+
+        finish();
     }
 
-    private void tick() {
-        for (Obstacle obstacle : obstacles) {
-            obstacle.tick();
+    @Override
+    public void tick() {
+        // Update the game speed.
+        gameSpeed = Math.min(MAX_GAME_SPEED, gameSpeed * GAME_SPEED_MULTIPLIER);
+
+        // Tick all entity managers.
+        for (Entity.Manager manager : entityManagers.values()) {
+            manager.tick();
         }
     }
 
-    private Obstacle createObstacle() {
-        float x = 0;
-        float y = 0;
-        float width = this.width * 0.25f;
-        float height = this.height * 0.03f;
-        colorTracker++;
-        if(colorTracker == 2) {
-            if(nextColor == 4) {
-                nextColor = 0;
-            } else {
-                nextColor++;
-            }
-            colorTracker = 0;
+    /**
+     * Data initialization on the mechanics thread before the game loop begins.
+     */
+    private void setup() {
+        gameSpeed = DEFAULT_GAME_SPEED;
+
+        entityManagers.put(EntityType.OBSTACLE, new Obstacle.Manager(game));
+
+        for (Entity.Manager manager : entityManagers.values()) {
+            manager.initialize();
         }
-        int color = colors[nextColor];
-        return new Obstacle(this, new Vector2f(x, y), width, height, color);
     }
 
+    /**
+     * Data cleanup on the mechanics thread after the game loop stops.
+     */
+    private void finish() {
+        for (Entity.Manager manager : entityManagers.values()) {
+            manager.terminate();
+        }
+
+        entityManagers.clear();
+    }
+
+    /**
+     * Creates a new snapshot of the entire game, ready for rendering. This may
+     * only be executed at the end of the tick, otherwise there will be data
+     * loss.
+     *
+     * @return the game snapshot.
+     */
     private GameSnapshot snapshot() {
-        Set<Obstacle.Snapshot> obstacles = new HashSet<>(this.obstacles.size());
-        for (Obstacle obstacle : this.obstacles) {
-            obstacles.add(obstacle.snapshot());
+        return GameSnapshot.builder()
+                .entities(snapshotEntities())
+                .build();
+    }
+
+    /**
+     * Creates a new snapshot view of all the entities from the current game
+     * state for rendering. Should only be executed at the end of a tick, once
+     * all entity calculations have been executed.
+     *
+     * @return the entity snapshot multimap.
+     */
+    private ImmutableMultimap<EntityType, Entity.Snapshot> snapshotEntities() {
+        // Create the entity snapshot multimap builder.
+        ImmutableMultimap.Builder<EntityType, Entity.Snapshot> target = ImmutableMultimap.builder();
+
+        // Add all entity snapshots from each entity manager to the builder.
+        for (Map.Entry<EntityType, Entity.Manager> entry : entityManagers.entrySet()) {
+            target.putAll(entry.getKey(), entry.getValue().snapshot());
         }
-        return new GameSnapshot(obstacles);
+
+        // Build and return the entity snapshot multimap.
+        return target.build();
     }
 }

@@ -1,20 +1,24 @@
 package net.novucs.colordash.entity;
 
-import net.novucs.colordash.MechanicsThread;
+import com.google.common.collect.ImmutableSet;
+
+import net.novucs.colordash.ColorDash;
+import net.novucs.colordash.GameService;
+import net.novucs.colordash.Tickable;
 import net.novucs.colordash.math.Vector2f;
 
 public abstract class Entity implements Tickable {
 
-    private final MechanicsThread mechanicsThread;
+    private final ColorDash game;
     private Vector2f location;
 
-    public Entity(MechanicsThread mechanicsThread, Vector2f location) {
-        this.mechanicsThread = mechanicsThread;
+    public Entity(ColorDash game, Vector2f location) {
+        this.game = game;
         this.location = location;
     }
 
-    public MechanicsThread getMechanicsThread() {
-        return mechanicsThread;
+    public ColorDash getGame() {
+        return game;
     }
 
     public Vector2f getLocation() {
@@ -38,5 +42,9 @@ public abstract class Entity implements Tickable {
         public Vector2f getLocation() {
             return location;
         }
+    }
+
+    public interface Manager extends GameService, Tickable {
+        ImmutableSet<Snapshot> snapshot();
     }
 }

@@ -1,4 +1,4 @@
-package net.novucs.colordash.entity;
+package net.novucs.colordash;
 
 public interface Tickable {
 
