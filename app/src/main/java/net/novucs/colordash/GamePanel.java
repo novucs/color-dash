@@ -7,7 +7,6 @@ import android.view.SurfaceView;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private final ColorDash colorDash;
-    private int colorState;
 
     public GamePanel(ColorDash colorDash) {
         super(colorDash);
