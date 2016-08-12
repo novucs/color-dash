@@ -9,6 +9,7 @@ import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.math.Vector2f;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public final class Obstacle extends Entity {
@@ -136,8 +137,21 @@ public final class Obstacle extends Entity {
                 spawnTickCounter = 0;
             }
 
-            for (Obstacle obstacle : obstacles) {
+            // Get the obstacles iterator.
+            Iterator<Obstacle> it = obstacles.iterator();
+            Obstacle obstacle;
+
+            // Iterate through each obstacle.
+            while (it.hasNext()) {
+                obstacle = it.next();
+
+                // Tick the obstacle.
                 obstacle.tick();
+
+                // Remove the obstacle if it is out of the screen range.
+                if (obstacle.getLocation().getY() > game.getPanel().getHeight()) {
+                    it.remove();
+                }
             }
         }
 
