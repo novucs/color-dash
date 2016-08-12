@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.novucs.colordash.ColorDash;
+import net.novucs.colordash.MechanicsThread;
 import net.novucs.colordash.math.Vector2f;
 
 import java.util.HashSet;
@@ -19,7 +20,7 @@ public final class Obstacle extends Entity {
     private static final float HEIGHT = 0.03f;
 
     // Speed modifier for only obstacles.
-    private static final float MOVE_SPEED = 0.002f;
+    private static final float MOVE_SPEED = -0.002f;
 
     // Duration in ticks between obstacle spawns.
     private static final int SPAWN_TICKS = 60;
@@ -132,8 +133,8 @@ public final class Obstacle extends Entity {
 
         @Override
         public void tick() {
-            if (++spawnTickCounter >= SPAWN_TICKS) {
-                obstacles.add(createObstacle());
+            if (++spawnTickCounter * game.getMechanicsThread().getGameSpeed() >= SPAWN_TICKS) {
+                spawnObstaclePair();
                 spawnTickCounter = 0;
             }
 
@@ -164,13 +165,22 @@ public final class Obstacle extends Entity {
             return target.build();
         }
 
-        private Obstacle createObstacle() {
+        private void spawnObstaclePair() {
             int color = tickColor();
-            float width = game.getPanel().getWidth() * WIDTH;
+            float width = MechanicsThread.getRandom().nextFloat() * game.getPanel().getWidth();
+
+            float percent = game.getPanel().getWidth() / 5;
+
+            width = Math.min(percent * 4, Math.round(width / percent) * percent);
+
             float height = game.getPanel().getHeight() * HEIGHT;
             float x = 0;
-            float y = 0 - height;
-            return new Obstacle(game, new Vector2f(x, y), width, height, color);
+            float y = game.getPanel().getHeight();
+            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color));
+
+            x = width + percent;
+            width = game.getPanel().getWidth() - width - percent;
+            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color));
         }
 
         private int tickColor() {

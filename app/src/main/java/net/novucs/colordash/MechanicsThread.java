@@ -8,10 +8,13 @@ import net.novucs.colordash.entity.Obstacle;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MechanicsThread extends Thread implements GameService, Tickable {
+
+    private static final Random RANDOM = new Random();
 
     // Target ticks per second.
     private static final int TPS = 30;
@@ -37,6 +40,15 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
     public MechanicsThread(ColorDash game) {
         super("mechanics-thread");
         this.game = game;
+    }
+
+    /**
+     * Gets the thread local random.
+     *
+     * @return the random.
+     */
+    public static Random getRandom() {
+        return RANDOM;
     }
 
     /**
