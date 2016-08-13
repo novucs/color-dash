@@ -20,10 +20,10 @@ public final class Obstacle extends Entity {
     private static final float HEIGHT = 0.03f;
 
     // Speed modifier for only obstacles.
-    private static final float MOVE_SPEED = -0.002f;
+    private static final float MOVE_SPEED = -0.004f;
 
     // Duration in ticks between obstacle spawns.
-    private static final int SPAWN_TICKS = 60;
+    private static final int SPAWN_TICKS = 40;
 
     // Number of obstacles pushed before their color changes.
     private static final int COLOR_COUNT = 4;
@@ -40,12 +40,14 @@ public final class Obstacle extends Entity {
     private float width;
     private float height;
     private int color;
+    private boolean left;
 
-    public Obstacle(ColorDash game, Vector2f location, float width, float height, int color) {
+    public Obstacle(ColorDash game, Vector2f location, float width, float height, int color, boolean left) {
         super(game, location);
         this.width = width;
         this.height = height;
         this.color = color;
+        this.left = left;
     }
 
     public float getWidth() {
@@ -106,6 +108,10 @@ public final class Obstacle extends Entity {
 
         public int getColor() {
             return color;
+        }
+
+        public boolean isLeft() {
+            return left;
         }
     }
 
@@ -176,11 +182,11 @@ public final class Obstacle extends Entity {
             float height = game.getPanel().getHeight() * HEIGHT;
             float x = 0;
             float y = game.getPanel().getHeight();
-            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color));
+            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color, true));
 
             x = width + percent;
             width = game.getPanel().getWidth() - width - percent;
-            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color));
+            obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color, false));
         }
 
         private int tickColor() {
