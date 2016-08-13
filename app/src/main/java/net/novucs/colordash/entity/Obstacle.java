@@ -156,7 +156,7 @@ public final class Obstacle extends Entity {
                 obstacle.tick();
 
                 // Remove the obstacle if it is out of the screen range.
-                if (obstacle.getLocation().getY() > game.getPanel().getHeight()) {
+                if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
                     it.remove();
                 }
             }
