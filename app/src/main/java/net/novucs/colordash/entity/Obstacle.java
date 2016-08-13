@@ -156,7 +156,7 @@ public final class Obstacle extends Entity {
                 obstacle.tick();
 
                 // Remove the obstacle if it is out of the screen range.
-                if (obstacle.getLocation().getY() > game.getPanel().getHeight()) {
+                if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
                     it.remove();
                 }
             }
@@ -175,17 +175,17 @@ public final class Obstacle extends Entity {
             int color = tickColor();
             float width = MechanicsThread.getRandom().nextFloat() * game.getPanel().getWidth();
 
-            float percent = game.getPanel().getWidth() / 5;
+            float segmentSize = game.getPanel().getWidth() / 5;
 
-            width = Math.min(percent * 4, Math.round(width / percent) * percent);
+            width = Math.min(segmentSize * 4, Math.round(width / segmentSize) * segmentSize);
 
             float height = game.getPanel().getHeight() * HEIGHT;
             float x = 0;
             float y = game.getPanel().getHeight();
             obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color, true));
 
-            x = width + percent;
-            width = game.getPanel().getWidth() - width - percent;
+            x = width + segmentSize;
+            width = game.getPanel().getWidth() - width - segmentSize;
             obstacles.add(new Obstacle(game, new Vector2f(x, y), width, height, color, false));
         }
 
