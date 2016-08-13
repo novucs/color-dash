@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RenderThread extends Thread implements GameService {
 
-    private final ColorDash colorDash;
+    private final ColorDash game;
     private final BlockingReference<GameSnapshot> snapshot = new BlockingReference<>();
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final Paint paint = new Paint();
 
-    public RenderThread(ColorDash colorDash) {
+    public RenderThread(ColorDash game) {
         super("render-thread");
-        this.colorDash = colorDash;
+        this.game = game;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RenderThread extends Thread implements GameService {
     }
 
     private void render(GameSnapshot snapshot) {
-        SurfaceHolder surfaceHolder = colorDash.getPanel().getHolder();
+        SurfaceHolder surfaceHolder = game.getPanel().getHolder();
         Canvas canvas = surfaceHolder.lockCanvas();
 
         // Wipe with white color.
