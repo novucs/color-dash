@@ -6,19 +6,24 @@ import android.view.SurfaceView;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final ColorDash colorDash;
+    private final ColorDash game;
+    private boolean surfaceEnabled;
 
-    public GamePanel(ColorDash colorDash) {
-        super(colorDash);
-        this.colorDash = colorDash;
+    public GamePanel(ColorDash game) {
+        super(game);
+        this.game = game;
         getHolder().addCallback(this);
         setFocusable(true);
     }
 
+    public boolean isSurfaceEnabled() {
+        return surfaceEnabled;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        colorDash.getMechanicsThread().initialize();
-        colorDash.getRenderThread().initialize();
+        surfaceEnabled = true;
+        game.checkState();
     }
 
     @Override
@@ -27,13 +32,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        colorDash.getRenderThread().terminate();
-        colorDash.getMechanicsThread().terminate();
+        surfaceEnabled = false;
+        game.checkState();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        return true;
+        return super.onTouchEvent(event);
     }
 }

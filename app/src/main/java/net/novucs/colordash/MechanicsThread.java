@@ -32,7 +32,6 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
     private static final float DEFAULT_GAME_SPEED = 1;
 
     private final ColorDash game;
-    private final AtomicBoolean running = new AtomicBoolean();
     private final Map<EntityType, Entity.Manager> entityManagers = new EnumMap<>(EntityType.class);
 
     private float gameSpeed;
@@ -62,13 +61,12 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
 
     @Override
     public void initialize() {
-        running.set(true);
         start();
     }
 
     @Override
     public void terminate() {
-        running.set(false);
+        interrupt();
     }
 
     @Override
@@ -78,7 +76,7 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
 
         setup();
 
-        while (running.get()) {
+        while (!isInterrupted()) {
             tickStart = System.currentTimeMillis();
 
             // Perform the game mechanics tick.
@@ -93,7 +91,7 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
                 try {
                     sleep(NORMAL_TICK_DURATION - tickDuration);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    break;
                 }
             }
         }

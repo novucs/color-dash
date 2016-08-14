@@ -7,9 +7,11 @@ import android.view.WindowManager;
 
 public class ColorDash extends Activity {
 
-    private final MechanicsThread mechanicsThread = new MechanicsThread(this);
-    private final RenderThread renderThread = new RenderThread(this);
+    private MechanicsThread mechanicsThread;
+    private RenderThread renderThread;
     private GamePanel panel;
+    private boolean paused;
+    private boolean running;
 
     public MechanicsThread getMechanicsThread() {
         return mechanicsThread;
@@ -17,6 +19,10 @@ public class ColorDash extends Activity {
 
     public RenderThread getRenderThread() {
         return renderThread;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     public GamePanel getPanel() {
@@ -33,5 +39,51 @@ public class ColorDash extends Activity {
 
         panel = new GamePanel(this);
         setContentView(panel);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        paused = true;
+        checkState();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        paused = false;
+        checkState();
+    }
+
+    public void checkState() {
+        if (!isPaused() && panel.isSurfaceEnabled()) {
+            start();
+            running = true;
+        } else if (running) {
+            stop();
+            running = false;
+        }
+    }
+
+    private void start() {
+        mechanicsThread = new MechanicsThread(this);
+        renderThread = new RenderThread(this);
+        renderThread.initialize();
+        mechanicsThread.initialize();
+    }
+
+    private void stop() {
+        try {
+            mechanicsThread.terminate();
+            mechanicsThread.join();
+            renderThread.terminate();
+            renderThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Free references.
+        mechanicsThread = null;
+        renderThread = null;
     }
 }

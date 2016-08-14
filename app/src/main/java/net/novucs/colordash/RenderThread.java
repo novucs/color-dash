@@ -20,7 +20,6 @@ public class RenderThread extends Thread implements GameService {
 
     private final ColorDash game;
     private final BlockingReference<GameSnapshot> snapshot = new BlockingReference<>();
-    private final AtomicBoolean running = new AtomicBoolean(true);
     private final Paint paint = new Paint();
 
     public RenderThread(ColorDash game) {
@@ -30,13 +29,12 @@ public class RenderThread extends Thread implements GameService {
 
     @Override
     public void initialize() {
-        running.set(true);
         start();
     }
 
     @Override
     public void terminate() {
-        running.set(false);
+        interrupt();
     }
 
     public void setSnapshot(GameSnapshot snapshot) {
@@ -45,13 +43,13 @@ public class RenderThread extends Thread implements GameService {
 
     @Override
     public void run() {
-        while (running.get()) {
+        while (!isInterrupted()) {
             GameSnapshot snapshot;
 
             try {
                 snapshot = this.snapshot.take();
             } catch (InterruptedException e) {
-                throw new RuntimeException("Failed to take a snapshot", e);
+                break;
             }
 
             render(snapshot);
