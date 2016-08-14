@@ -15,9 +15,9 @@ import java.util.Set;
 
 public final class Obstacle extends Entity {
 
-    // Default obstacle percentage dimensions.
-    private static final float WIDTH = 0.25f;
+    // Obstacle dimensions.
     private static final float HEIGHT = 0.03f;
+    private static final int SEGMENT_COUNT = 5;
 
     // Speed modifier for only obstacles.
     private static final float MOVE_SPEED = -0.004f;
@@ -174,9 +174,8 @@ public final class Obstacle extends Entity {
         private void spawnObstaclePair() {
             int color = tickColor();
 
-            float segmentSize = game.getPanel().getWidth() / 5;
-            float width = MechanicsThread.getRandom().nextFloat() * segmentSize * 4;
-
+            float segmentSize = game.getPanel().getWidth() / SEGMENT_COUNT;
+            float width = MechanicsThread.getRandom().nextFloat() * segmentSize * (SEGMENT_COUNT - 1);
             width = Math.round(width / segmentSize) * segmentSize;
 
             float height = game.getPanel().getHeight() * HEIGHT;

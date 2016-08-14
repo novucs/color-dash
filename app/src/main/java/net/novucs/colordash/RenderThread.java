@@ -94,12 +94,15 @@ public class RenderThread extends Thread implements GameService {
         float bottom = top + obstacle.getHeight();
 
         paint.setColor(obstacle.getColor());
+
         if (obstacle.isLeft() && right != 0) {
-            canvas.drawCircle(right, (bottom + top) / 2, obstacle.getHeight() / 2, paint);
-            right -= game.getPanel().getWidth() * 0.003f;
+            float radius = obstacle.getHeight() / 2;
+            right -= radius;
+            canvas.drawCircle(right, (bottom + top) / 2, radius, paint);
         } else if (!obstacle.isLeft() && left != game.getPanel().getWidth()) {
-            canvas.drawCircle(left, (bottom + top) / 2, obstacle.getHeight() / 2, paint);
-            left -= game.getPanel().getWidth() * 0.003f;
+            float radius = obstacle.getHeight() / 2;
+            left += radius;
+            canvas.drawCircle(left, (bottom + top) / 2, radius, paint);
         }
 
         canvas.drawRect(left, top, right, bottom, paint);
