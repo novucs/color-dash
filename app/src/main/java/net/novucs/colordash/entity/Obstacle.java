@@ -173,11 +173,11 @@ public final class Obstacle extends Entity {
 
         private void spawnObstaclePair() {
             int color = tickColor();
-            float width = MechanicsThread.getRandom().nextFloat() * game.getPanel().getWidth();
 
             float segmentSize = game.getPanel().getWidth() / 5;
+            float width = MechanicsThread.getRandom().nextFloat() * segmentSize * 4;
 
-            width = Math.min(segmentSize * 4, Math.round(width / segmentSize) * segmentSize);
+            width = Math.round(width / segmentSize) * segmentSize;
 
             float height = game.getPanel().getHeight() * HEIGHT;
             float x = 0;
