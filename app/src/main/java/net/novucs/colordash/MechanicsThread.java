@@ -5,12 +5,12 @@ import com.google.common.collect.ImmutableMultimap;
 import net.novucs.colordash.entity.Entity;
 import net.novucs.colordash.entity.EntityType;
 import net.novucs.colordash.entity.Obstacle;
+import net.novucs.colordash.entity.Player;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MechanicsThread extends Thread implements GameService, Tickable {
 
@@ -117,6 +117,7 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
         gameSpeed = DEFAULT_GAME_SPEED;
 
         entityManagers.put(EntityType.OBSTACLE, new Obstacle.Manager(game));
+        entityManagers.put(EntityType.PLAYER, new Player.Manager(game));
 
         for (Entity.Manager manager : entityManagers.values()) {
             manager.initialize();

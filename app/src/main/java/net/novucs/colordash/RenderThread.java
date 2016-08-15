@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableMultimap;
 import net.novucs.colordash.entity.Entity;
 import net.novucs.colordash.entity.EntityType;
 import net.novucs.colordash.entity.Obstacle;
+import net.novucs.colordash.entity.Player;
 import net.novucs.colordash.util.BlockingReference;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RenderThread extends Thread implements GameService {
 
@@ -77,17 +77,20 @@ public class RenderThread extends Thread implements GameService {
                 case OBSTACLE:
                     renderObstacles(canvas, entry.getValue());
                     break;
+                case PLAYER:
+                    renderPlayers(canvas, entry.getValue());
+                    break;
             }
         }
     }
 
     private void renderObstacles(Canvas canvas, Collection<Entity.Snapshot> obstacles) {
         for (Entity.Snapshot entity : obstacles) {
-            render(canvas, (Obstacle.Snapshot) entity);
+            renderObstacle(canvas, (Obstacle.Snapshot) entity);
         }
     }
 
-    private void render(Canvas canvas, Obstacle.Snapshot obstacle) {
+    private void renderObstacle(Canvas canvas, Obstacle.Snapshot obstacle) {
         float left = obstacle.getLocation().getX();
         float top = obstacle.getLocation().getY();
         float right = left + obstacle.getWidth();
@@ -106,5 +109,19 @@ public class RenderThread extends Thread implements GameService {
         }
 
         canvas.drawRect(left, top, right, bottom, paint);
+    }
+
+    private void renderPlayers(Canvas canvas, Collection<Entity.Snapshot> players) {
+        for (Entity.Snapshot entity : players) {
+            renderPlayer(canvas, (Player.Snapshot) entity);
+        }
+    }
+
+    private void renderPlayer(Canvas canvas, Player.Snapshot player) {
+        float cx = player.getLocation().getX();
+        float cy = player.getLocation().getY();
+        float radius = player.getRadius();
+        paint.setColor(Color.BLUE);
+        canvas.drawCircle(cx, cy, radius, paint);
     }
 }
