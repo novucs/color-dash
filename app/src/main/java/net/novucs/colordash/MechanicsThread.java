@@ -59,6 +59,15 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
         return gameSpeed;
     }
 
+    /**
+     * Returns all the entity managers.
+     *
+     * @return the entity managers.
+     */
+    public Map<EntityType, Entity.Manager> getEntityManagers() {
+        return entityManagers;
+    }
+
     @Override
     public void initialize() {
         start();

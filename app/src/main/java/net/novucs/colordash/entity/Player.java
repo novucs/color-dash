@@ -5,10 +5,15 @@ import com.google.common.collect.ImmutableSet;
 import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.math.Vector2f;
 
-public class Player extends Entity {
+import java.util.Set;
+
+public final class Player extends Entity {
 
     // Default percentage radius of the player.
     private static final float RADIUS = 0.03f;
+
+    // Acceleration of the player.
+    private static final Vector2f ACCELERATION = new Vector2f(0.001f, 0.001f);
 
     private float radius;
     private Vector2f velocity;
@@ -37,6 +42,84 @@ public class Player extends Entity {
 
     @Override
     public void tick() {
+        checkInputs();
+        checkCollisions();
+        setLocation(getNextLocation());
+    }
+
+    private void checkInputs() {
+        float xSpeed = ACCELERATION.getX() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getWidth();
+        float ySpeed = ACCELERATION.getY() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
+
+        switch (getGame().getPanel().getLastClickType()) {
+            case LEFT:
+                setVelocity(getVelocity().add(-xSpeed, ySpeed));
+                break;
+            case RIGHT:
+                setVelocity(getVelocity().add(xSpeed, ySpeed));
+                break;
+        }
+    }
+
+    private Vector2f checkCollisions() {
+        Set<Obstacle> obstacles = ((Obstacle.Manager) getGame().getMechanicsThread().getEntityManagers().get(EntityType.OBSTACLE)).getObstacles();
+        Vector2f nextLocation = getNextLocation();
+
+        for (Obstacle obstacle : obstacles) {
+            if (intersectsX(nextLocation, obstacle) && intersectsY(nextLocation, obstacle)) {
+                System.out.println("x:" + getLocation().getX() + "-" + nextLocation.getX() + "-" +
+                        intersectsX(getLocation(), obstacle) + "\ty:" + getLocation().getY() + "-" +
+                        nextLocation.getY() + "-" + intersectsY(getLocation(), obstacle));
+
+                if (intersectsX(getLocation(), obstacle)) {
+                    float x;
+
+                    if (obstacle.getLocation().getX() == 0) {
+                        System.out.println(1);
+                        x = obstacle.getWidth() + getRadius();
+                    } else {
+                        System.out.println(2);
+                        x = obstacle.getLocation().getX() - getRadius();
+                    }
+
+                    setVelocity(new Vector2f(0, getVelocity().getY()));
+                    return new Vector2f(x, nextLocation.getY());
+                }
+
+                System.out.println(3);
+                float ySpeed = Obstacle.getMoveSpeed() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
+                setVelocity(new Vector2f(getVelocity().getX(), ySpeed));
+                return new Vector2f(nextLocation.getX(), obstacle.getLocation().getY() + ySpeed);
+            }
+        }
+
+        return nextLocation;
+    }
+
+    private Vector2f getNextLocation() {
+        float x = clamp(getVelocity().getX() + getLocation().getX(), 0, getGame().getPanel().getWidth());
+        float y = clamp(getVelocity().getY() + getLocation().getY(), 0, getGame().getPanel().getHeight());
+        return new Vector2f(x, y);
+    }
+
+    private boolean intersectsX(Vector2f location, Obstacle obstacle) {
+        float aLeft = location.getX();
+        float aRight = getRadius()+ aLeft;
+        float bLeft = obstacle.getLocation().getX();
+        float bRight = obstacle.getWidth() + bLeft;
+        return aLeft < bRight && aRight > bLeft;
+    }
+
+    private boolean intersectsY(Vector2f location, Obstacle obstacle) {
+        float aTop = location.getY();
+        float aBottom = getRadius() + aTop;
+        float bTop = obstacle.getLocation().getY();
+        float bBottom = obstacle.getHeight() + bTop;
+        return aTop < bBottom && aBottom > bTop;
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(value, max));
     }
 
     @Override

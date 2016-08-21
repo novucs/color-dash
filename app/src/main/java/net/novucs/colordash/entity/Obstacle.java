@@ -20,10 +20,10 @@ public final class Obstacle extends Entity {
     private static final int SEGMENT_COUNT = 5;
 
     // Speed modifier for only obstacles.
-    private static final float MOVE_SPEED = -0.004f;
+    private static final float MOVE_SPEED = -0.003f;
 
     // Duration in ticks between obstacle spawns.
-    private static final int SPAWN_TICKS = 40;
+    private static final int SPAWN_TICKS = 60;
 
     // Number of obstacles pushed before their color changes.
     private static final int COLOR_COUNT = 4;
@@ -48,6 +48,10 @@ public final class Obstacle extends Entity {
         this.height = height;
         this.color = color;
         this.left = left;
+    }
+
+    public static float getMoveSpeed() {
+        return MOVE_SPEED;
     }
 
     public float getWidth() {
@@ -125,6 +129,10 @@ public final class Obstacle extends Entity {
 
         public Manager(ColorDash game) {
             this.game = game;
+        }
+
+        public Set<Obstacle> getObstacles() {
+            return obstacles;
         }
 
         @Override
