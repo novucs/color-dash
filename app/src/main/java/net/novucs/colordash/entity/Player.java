@@ -66,31 +66,14 @@ public final class Player extends Entity {
         Vector2f nextLocation = getNextLocation();
 
         for (Obstacle obstacle : obstacles) {
-            if (intersectsX(nextLocation, obstacle) && intersectsY(nextLocation, obstacle)) {
-                System.out.println("x:" + getLocation().getX() + "-" + nextLocation.getX() + "-" +
-                        intersectsX(getLocation(), obstacle) + "\ty:" + getLocation().getY() + "-" +
-                        nextLocation.getY() + "-" + intersectsY(getLocation(), obstacle));
-
-                if (intersectsX(getLocation(), obstacle)) {
-                    float x;
-
-                    if (obstacle.getLocation().getX() == 0) {
-                        System.out.println(1);
-                        x = obstacle.getWidth() + getRadius();
-                    } else {
-                        System.out.println(2);
-                        x = obstacle.getLocation().getX() - getRadius();
-                    }
-
-                    setVelocity(new Vector2f(0, getVelocity().getY()));
-                    return new Vector2f(x, nextLocation.getY());
-                }
-
-                System.out.println(3);
-                float ySpeed = Obstacle.getMoveSpeed() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
-                setVelocity(new Vector2f(getVelocity().getX(), ySpeed));
-                return new Vector2f(nextLocation.getX(), obstacle.getLocation().getY() + ySpeed);
+            if (!intersectsX(nextLocation, obstacle) || !intersectsY(nextLocation, obstacle)) {
+                continue;
             }
+
+            float ySpeed = Obstacle.getMoveSpeed() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
+            setLocation(new Vector2f(getLocation().getX(), obstacle.getLocation().getY() - getRadius()));
+            setVelocity(new Vector2f(getVelocity().getX(), ySpeed));
+            return new Vector2f(nextLocation.getX(), obstacle.getLocation().getY() + ySpeed);
         }
 
         return nextLocation;
@@ -104,7 +87,7 @@ public final class Player extends Entity {
 
     private boolean intersectsX(Vector2f location, Obstacle obstacle) {
         float aLeft = location.getX();
-        float aRight = getRadius()+ aLeft;
+        float aRight = getRadius() + aLeft;
         float bLeft = obstacle.getLocation().getX();
         float bRight = obstacle.getWidth() + bLeft;
         return aLeft < bRight && aRight > bLeft;
