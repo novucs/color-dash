@@ -82,6 +82,7 @@ public class RenderThread extends Thread implements GameService {
                     break;
             }
         }
+        renderUI(canvas);
     }
 
     private void renderObstacles(Canvas canvas, Collection<Entity.Snapshot> obstacles) {
@@ -117,11 +118,28 @@ public class RenderThread extends Thread implements GameService {
         }
     }
 
+    //Function that will render the bottom bar, score, and pause / unpause buttons.
+    private void renderUI(Canvas canvas) {
+        if (game.getApplicationState() == ApplicationState.PAUSED || game.getApplicationState() == ApplicationState.PLAYING) {
+
+            float left = 0;
+            float top = canvas.getHeight() * 0.95f;
+            float right = left + canvas.getWidth();
+            float bottom = canvas.getHeight();
+
+            paint.setColor(Color.parseColor("#FFF2F2F2"));
+            paint.setAlpha(200);
+            canvas.drawRect(left, top, right, bottom, paint);
+
+
+        }
+    }
+
     private void renderPlayer(Canvas canvas, Player.Snapshot player) {
         float cx = player.getLocation().getX();
         float cy = player.getLocation().getY();
         float radius = player.getRadius();
-        paint.setColor(Color.BLUE);
+        paint.setColor(Color.GREEN);
         canvas.drawCircle(cx, cy, radius, paint);
     }
 }

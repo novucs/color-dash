@@ -12,6 +12,7 @@ public class ColorDash extends Activity {
     private GamePanel panel;
     private boolean paused;
     private boolean running;
+    private ApplicationState applicationState;
 
     public MechanicsThread getMechanicsThread() {
         return mechanicsThread;
@@ -27,6 +28,14 @@ public class ColorDash extends Activity {
 
     public GamePanel getPanel() {
         return panel;
+    }
+
+    public ApplicationState getApplicationState() {
+        return applicationState;
+    }
+
+    public void setApplicationState(ApplicationState applicationState) {
+        this.applicationState = applicationState;
     }
 
     @Override

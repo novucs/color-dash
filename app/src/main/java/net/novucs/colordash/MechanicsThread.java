@@ -36,6 +36,8 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
 
     private float gameSpeed;
 
+    private int score;
+
     public MechanicsThread(ColorDash game) {
         super("mechanics-thread");
         this.game = game;
@@ -127,7 +129,7 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
 
         entityManagers.put(EntityType.OBSTACLE, new Obstacle.Manager(game));
         entityManagers.put(EntityType.PLAYER, new Player.Manager(game));
-
+        game.setApplicationState(ApplicationState.PLAYING);
         for (Entity.Manager manager : entityManagers.values()) {
             manager.initialize();
         }
