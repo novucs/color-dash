@@ -130,8 +130,6 @@ public class RenderThread extends Thread implements GameService {
             paint.setColor(Color.parseColor("#FFF2F2F2"));
             paint.setAlpha(200);
             canvas.drawRect(left, top, right, bottom, paint);
-
-
         }
     }
 
