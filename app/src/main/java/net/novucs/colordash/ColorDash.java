@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import net.novucs.colordash.state.ApplicationState;
+
 public class ColorDash extends Activity {
 
     private MechanicsThread mechanicsThread;
@@ -12,7 +14,6 @@ public class ColorDash extends Activity {
     private GamePanel panel;
     private boolean paused;
     private boolean running;
-    private ApplicationState applicationState;
 
     public MechanicsThread getMechanicsThread() {
         return mechanicsThread;
@@ -28,14 +29,6 @@ public class ColorDash extends Activity {
 
     public GamePanel getPanel() {
         return panel;
-    }
-
-    public ApplicationState getApplicationState() {
-        return applicationState;
-    }
-
-    public void setApplicationState(ApplicationState applicationState) {
-        this.applicationState = applicationState;
     }
 
     @Override

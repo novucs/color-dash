@@ -1,20 +1,26 @@
-package net.novucs.colordash;
+package net.novucs.colordash.state.game;
 
 import com.google.common.collect.ImmutableMultimap;
 
 import net.novucs.colordash.entity.Entity;
 import net.novucs.colordash.entity.EntityType;
+import net.novucs.colordash.state.ApplicationState;
+import net.novucs.colordash.state.Snapshot;
 
 /**
  * A snapshot of a game tick for the render thread to process.
  */
-public final class GameSnapshot {
+public final class GameSnapshot implements Snapshot {
 
     private final ImmutableMultimap<EntityType, Entity.Snapshot> entities;
     private int score;
-    private GameSnapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score) {
+    private ApplicationState state;
+
+    private GameSnapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score, ApplicationState state) {
         this.entities = entities;
         this.score = score;
+        this.state = state;
+
     }
 
     /**
@@ -43,10 +49,16 @@ public final class GameSnapshot {
         return score;
     }
 
+    @Override
+    public ApplicationState getState() {
+        return state;
+    }
+
     public static final class Builder {
 
         private ImmutableMultimap<EntityType, Entity.Snapshot> entities;
         private int score;
+        private ApplicationState state;
 
         /**
          * Sets the entity snapshots to be rendered.
@@ -54,9 +66,18 @@ public final class GameSnapshot {
          * @param entities the entity snapshot multimap.
          * @return this.
          */
-        public Builder snapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score) {
+        public Builder entities(ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
             this.entities = entities;
+            return this;
+        }
+
+        public Builder score(int score) {
             this.score = score;
+            return this;
+        }
+
+        public Builder state(ApplicationState state) {
+            this.state = state;
             return this;
         }
 
@@ -66,7 +87,7 @@ public final class GameSnapshot {
          * @return <code>true</code> if this can be built.
          */
         public boolean isValid() {
-            return entities != null;
+            return entities != null && state != null;
         }
 
         /**
@@ -81,7 +102,7 @@ public final class GameSnapshot {
                 throw new IllegalStateException();
             }
 
-            return new GameSnapshot(entities, score);
+            return new GameSnapshot(entities, score, state);
         }
     }
 }
