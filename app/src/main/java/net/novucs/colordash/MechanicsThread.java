@@ -70,6 +70,14 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
         return entityManagers;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int newScore) {
+        this.score = newScore;
+    }
+
     @Override
     public void initialize() {
         start();
@@ -155,7 +163,7 @@ public class MechanicsThread extends Thread implements GameService, Tickable {
      */
     private GameSnapshot snapshot() {
         return GameSnapshot.builder()
-                .entities(snapshotEntities())
+                .snapshot(snapshotEntities(), score)
                 .build();
     }
 

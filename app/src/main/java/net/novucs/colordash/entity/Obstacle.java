@@ -78,6 +78,10 @@ public final class Obstacle extends Entity {
         this.color = color;
     }
 
+    public boolean isLeft() {
+        return left;
+    }
+
     @Override
     public void tick() {
         float distance = getGame().getPanel().getHeight() * getGame().getMechanicsThread().getGameSpeed() * MOVE_SPEED;
@@ -166,6 +170,9 @@ public final class Obstacle extends Entity {
                 // Remove the obstacle if it is out of the screen range.
                 if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
                     it.remove();
+                    if(obstacle.isLeft()) {
+                        game.getMechanicsThread().setScore(game.getMechanicsThread().getScore() + 1);
+                    }
                 }
             }
         }

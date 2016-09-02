@@ -66,12 +66,12 @@ public class RenderThread extends Thread implements GameService {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
 
-        renderAll(canvas, snapshot.getEntities());
+        renderAll(canvas, snapshot.getEntities(), snapshot.getScore());
 
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
-    private void renderAll(Canvas canvas, ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
+    private void renderAll(Canvas canvas, ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score) {
         for (Map.Entry<EntityType, Collection<Entity.Snapshot>> entry : entities.asMap().entrySet()) {
             switch (entry.getKey()) {
                 case OBSTACLE:
@@ -82,7 +82,7 @@ public class RenderThread extends Thread implements GameService {
                     break;
             }
         }
-        renderUI(canvas);
+        renderUI(canvas, score);
     }
 
     private void renderObstacles(Canvas canvas, Collection<Entity.Snapshot> obstacles) {
@@ -119,17 +119,20 @@ public class RenderThread extends Thread implements GameService {
     }
 
     //Function that will render the bottom bar, score, and pause / unpause buttons.
-    private void renderUI(Canvas canvas) {
+    private void renderUI(Canvas canvas, int score) {
         if (game.getApplicationState() == ApplicationState.PAUSED || game.getApplicationState() == ApplicationState.PLAYING) {
-
             float left = 0;
             float top = canvas.getHeight() * 0.95f;
             float right = left + canvas.getWidth();
             float bottom = canvas.getHeight();
-
             paint.setColor(Color.parseColor("#FFF2F2F2"));
             paint.setAlpha(200);
             canvas.drawRect(left, top, right, bottom, paint);
+
+            //Draw in the score
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(100.0f);
+            canvas.drawText("Score: " + score, left, canvas.getHeight() * 0.987f, paint);
         }
     }
 

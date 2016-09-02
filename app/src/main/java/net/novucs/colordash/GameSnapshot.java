@@ -11,9 +11,10 @@ import net.novucs.colordash.entity.EntityType;
 public final class GameSnapshot {
 
     private final ImmutableMultimap<EntityType, Entity.Snapshot> entities;
-
-    private GameSnapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
+    private int score;
+    private GameSnapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score) {
         this.entities = entities;
+        this.score = score;
     }
 
     /**
@@ -24,7 +25,6 @@ public final class GameSnapshot {
     public ImmutableMultimap<EntityType, Entity.Snapshot> getEntities() {
         return entities;
     }
-
     /**
      * Creates a new builder instance.
      *
@@ -34,9 +34,19 @@ public final class GameSnapshot {
         return new Builder();
     }
 
+    /**
+     * Returns the current game score.
+     *
+     * @return the game score.
+     */
+    public int getScore() {
+        return score;
+    }
+
     public static final class Builder {
 
         private ImmutableMultimap<EntityType, Entity.Snapshot> entities;
+        private int score;
 
         /**
          * Sets the entity snapshots to be rendered.
@@ -44,8 +54,9 @@ public final class GameSnapshot {
          * @param entities the entity snapshot multimap.
          * @return this.
          */
-        public Builder entities(ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
+        public Builder snapshot(ImmutableMultimap<EntityType, Entity.Snapshot> entities, int score) {
             this.entities = entities;
+            this.score = score;
             return this;
         }
 
@@ -70,7 +81,7 @@ public final class GameSnapshot {
                 throw new IllegalStateException();
             }
 
-            return new GameSnapshot(entities);
+            return new GameSnapshot(entities, score);
         }
     }
 }
