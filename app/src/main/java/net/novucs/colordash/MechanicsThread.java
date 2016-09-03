@@ -34,6 +34,15 @@ public class MechanicsThread extends Thread implements GameService {
         return RANDOM;
     }
 
+    /**
+     * Gets the current task.
+     *
+     * @return the task.
+     */
+    public MechanicsTask getTask() {
+        return task;
+    }
+
     @Override
     public void initialize() {
         start();

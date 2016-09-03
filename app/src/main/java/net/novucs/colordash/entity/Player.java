@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableSet;
 
 import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.math.Vector2f;
+import net.novucs.colordash.state.MechanicsTask;
+import net.novucs.colordash.state.game.GameMechanicsTask;
 
 import java.util.Set;
 
@@ -41,15 +43,15 @@ public final class Player extends Entity {
     }
 
     @Override
-    public void tick() {
-        checkInputs();
-        checkCollisions();
+    public void tick(float gameSpeed) {
+        checkInputs(gameSpeed);
+        checkCollisions(gameSpeed);
         setLocation(getNextLocation());
     }
 
-    private void checkInputs() {
-        float xSpeed = ACCELERATION.getX() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getWidth();
-        float ySpeed = ACCELERATION.getY() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
+    private void checkInputs(float gameSpeed) {
+        float xSpeed = ACCELERATION.getX() * gameSpeed * getGame().getPanel().getWidth();
+        float ySpeed = ACCELERATION.getY() * gameSpeed * getGame().getPanel().getHeight();
 
         switch (getGame().getPanel().getLastClickType()) {
             case LEFT:
@@ -61,8 +63,14 @@ public final class Player extends Entity {
         }
     }
 
-    private Vector2f checkCollisions() {
-        Set<Obstacle> obstacles = ((Obstacle.Manager) getGame().getMechanicsThread().getEntityManagers().get(EntityType.OBSTACLE)).getObstacles();
+    private Vector2f checkCollisions(float gameSpeed) {
+        MechanicsTask task = getGame().getMechanicsThread().getTask();
+        if (!(task instanceof GameMechanicsTask)) {
+            return getNextLocation();
+        }
+
+        GameMechanicsTask gameTask = (GameMechanicsTask) task;
+        Set<Obstacle> obstacles = ((Obstacle.Manager) gameTask.getEntityManagers().get(EntityType.OBSTACLE)).getObstacles();
         Vector2f nextLocation = getNextLocation();
 
         for (Obstacle obstacle : obstacles) {
@@ -70,7 +78,7 @@ public final class Player extends Entity {
                 continue;
             }
 
-            float ySpeed = Obstacle.getMoveSpeed() * getGame().getMechanicsThread().getGameSpeed() * getGame().getPanel().getHeight();
+            float ySpeed = Obstacle.getMoveSpeed() * gameSpeed * getGame().getPanel().getHeight();
             setLocation(new Vector2f(getLocation().getX(), obstacle.getLocation().getY() - getRadius()));
             setVelocity(new Vector2f(getVelocity().getX(), ySpeed));
             return new Vector2f(nextLocation.getX(), obstacle.getLocation().getY() + ySpeed);
@@ -152,8 +160,8 @@ public final class Player extends Entity {
         }
 
         @Override
-        public void tick() {
-            player.tick();
+        public void tick(float gameSpeed) {
+            player.tick(gameSpeed);
         }
     }
 }

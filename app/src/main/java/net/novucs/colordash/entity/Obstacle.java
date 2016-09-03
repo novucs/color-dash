@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableSet;
 import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.MechanicsThread;
 import net.novucs.colordash.math.Vector2f;
+import net.novucs.colordash.state.MechanicsTask;
+import net.novucs.colordash.state.game.GameMechanicsTask;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -83,8 +85,8 @@ public final class Obstacle extends Entity {
     }
 
     @Override
-    public void tick() {
-        float distance = getGame().getPanel().getHeight() * getGame().getMechanicsThread().getGameSpeed() * MOVE_SPEED;
+    public void tick(float gameSpeed) {
+        float distance = getGame().getPanel().getHeight() * gameSpeed * MOVE_SPEED;
         setLocation(getLocation().add(0, distance));
     }
 
@@ -150,30 +152,39 @@ public final class Obstacle extends Entity {
         }
 
         @Override
-        public void tick() {
-            if (++spawnTickCounter * game.getMechanicsThread().getGameSpeed() >= SPAWN_TICKS) {
+        public void tick(float gameSpeed) {
+            if (++spawnTickCounter * gameSpeed >= SPAWN_TICKS) {
                 spawnObstaclePair();
                 spawnTickCounter = 0;
             }
 
             // Get the obstacles iterator.
             Iterator<Obstacle> it = obstacles.iterator();
-            Obstacle obstacle;
 
             // Iterate through each obstacle.
             while (it.hasNext()) {
-                obstacle = it.next();
+                tickObstacle(gameSpeed, it);
+            }
+        }
 
-                // Tick the obstacle.
-                obstacle.tick();
+        private void tickObstacle(float gameSpeed, Iterator<Obstacle> it) {
+            Obstacle obstacle;
+            obstacle = it.next();
 
-                // Remove the obstacle if it is out of the screen range.
-                if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
-                    it.remove();
-                    if(obstacle.isLeft()) {
-                        game.getMechanicsThread().setScore(game.getMechanicsThread().getScore() + 1);
-                    }
-                }
+            // Tick the obstacle.
+            obstacle.tick(gameSpeed);
+
+            // Remove the obstacle if it is out of the screen range.
+            if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
+                it.remove();
+                attemptScore(obstacle);
+            }
+        }
+
+        private void attemptScore(Obstacle obstacle) {
+            MechanicsTask task = game.getMechanicsThread().getTask();
+            if (obstacle.isLeft() && task instanceof GameMechanicsTask) {
+                ((GameMechanicsTask) task).incrementScore();
             }
         }
 

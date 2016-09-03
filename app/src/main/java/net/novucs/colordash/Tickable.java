@@ -2,6 +2,6 @@ package net.novucs.colordash;
 
 public interface Tickable {
 
-    void tick();
+    void tick(float gameSpeed);
 
 }

@@ -13,7 +13,6 @@ import net.novucs.colordash.state.Snapshot;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class GameMechanicsTask implements MechanicsTask {
 
@@ -28,9 +27,9 @@ public class GameMechanicsTask implements MechanicsTask {
 
     private final Map<EntityType, Entity.Manager> entityManagers = new EnumMap<>(EntityType.class);
     private final ColorDash game;
+
     private float gameSpeed;
     private int score;
-    private ApplicationState state;
 
     public ColorDash getGame() {
         return game;
@@ -58,8 +57,12 @@ public class GameMechanicsTask implements MechanicsTask {
         return score;
     }
 
-    public void setScore(int newScore) {
-        this.score = newScore;
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void incrementScore() {
+        score++;
     }
 
     public GameMechanicsTask(ColorDash game) {
@@ -71,7 +74,6 @@ public class GameMechanicsTask implements MechanicsTask {
 
         entityManagers.put(EntityType.OBSTACLE, new Obstacle.Manager(game));
         entityManagers.put(EntityType.PLAYER, new Player.Manager(game));
-        this.state = ApplicationState.GAME;
         for (Entity.Manager manager : entityManagers.values()) {
             manager.initialize();
         }
@@ -92,7 +94,7 @@ public class GameMechanicsTask implements MechanicsTask {
 
         // Tick all entity managers.
         for (Entity.Manager manager : entityManagers.values()) {
-            manager.tick();
+            manager.tick(gameSpeed);
         }
     }
 
@@ -101,7 +103,7 @@ public class GameMechanicsTask implements MechanicsTask {
         return GameSnapshot.builder()
                 .entities(snapshotEntities())
                 .score(score)
-                .state(state)
+                .state(ApplicationState.GAME)
                 .build();
     }
 
