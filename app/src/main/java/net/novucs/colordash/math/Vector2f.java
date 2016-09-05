@@ -2,8 +2,8 @@ package net.novucs.colordash.math;
 
 public class Vector2f implements Cloneable {
 
-    private final float x;
-    private final float y;
+    private float x;
+    private float y;
 
     public Vector2f(float x, float y) {
         this.x = x;
@@ -18,20 +18,25 @@ public class Vector2f implements Cloneable {
         return y;
     }
 
-    public Vector2f add(float x, float y) {
-        return new Vector2f(this.x + x, this.y + y);
+    public void addX(float x) {
+        this.x += x;
     }
 
-    public Vector2f add(Vector2f other) {
-        return add(other.getX(), other.getY());
+    public void setX(float x) {
+        this.x = x;
     }
 
-    public Vector2f sub(float x, float y) {
-        return new Vector2f(this.x - x, this.y - y);
+    public void setY(float y) {
+        this.y = y;
     }
 
-    public Vector2f sub(Vector2f other) {
-        return sub(other.getX(), other.getY());
+    public void addY(float y) {
+        this.y += y;
+    }
+
+    public void add(float x, float y) {
+        addX(x);
+        addY(y);
     }
 
     @Override
@@ -41,5 +46,32 @@ public class Vector2f implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vector2f vector2f = (Vector2f) o;
+
+        if (Float.compare(vector2f.x, x) != 0) return false;
+        return Float.compare(vector2f.y, y) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (x != +0.0f ? Float.floatToIntBits(x) : 0);
+        result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector2f{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

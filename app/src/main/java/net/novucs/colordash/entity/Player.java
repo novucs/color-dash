@@ -15,7 +15,8 @@ public final class Player extends Entity {
     private static final float RADIUS = 0.03f;
 
     // Acceleration of the player.
-    private static final Vector2f ACCELERATION = new Vector2f(0.001f, 0.001f);
+    private static final float ACCELERATION_X = 0.001f;
+    private static final float ACCELERATION_Y = 0.001f;
 
     private float radius;
     private Vector2f velocity;
@@ -51,14 +52,14 @@ public final class Player extends Entity {
     }
 
     private void checkInputs(float gameSpeed) {
-        float xSpeed = ACCELERATION.getX() * gameSpeed * getGame().getPanel().getWidth();
+        float xSpeed = ACCELERATION_X * gameSpeed * getGame().getPanel().getWidth();
 
         switch (getGame().getPanel().getLastClickType()) {
             case LEFT:
-                setVelocity(getVelocity().add(-xSpeed, 0));
+                velocity.addX(-xSpeed);
                 break;
             case RIGHT:
-                setVelocity(getVelocity().add(xSpeed, 0));
+                velocity.addX(xSpeed);
                 break;
         }
     }
@@ -71,11 +72,11 @@ public final class Player extends Entity {
 
         if (currentObstacle != null) {
             if (intersectsX(getNextLocation(), currentObstacle)) {
-                setLocation(new Vector2f(getLocation().getX(), currentObstacle.getLocation().getY() - getRadius()));
-                setVelocity(new Vector2f(velocity.getX(), getObstacleSpeed(gameSpeed)));
+                location.setY(currentObstacle.getLocation().getY() - getRadius());
+                velocity.setY(getObstacleSpeed(gameSpeed));
             } else {
                 currentObstacle = null;
-                setVelocity(new Vector2f(velocity.getX(), getGravitySpeed(gameSpeed)));
+                velocity.setY(getGravitySpeed(gameSpeed));
             }
             return;
         }
@@ -83,10 +84,10 @@ public final class Player extends Entity {
         currentObstacle = getIntersectingObstacle();
 
         if (currentObstacle != null) {
-            setLocation(new Vector2f(getLocation().getX(), currentObstacle.getLocation().getY() - getRadius()));
-            setVelocity(new Vector2f(velocity.getX(), getObstacleSpeed(gameSpeed)));
+            location.setY(currentObstacle.getLocation().getY() - getRadius());
+            velocity.setY(getObstacleSpeed(gameSpeed));
         } else {
-            setVelocity(velocity.add(0, getGravitySpeed(gameSpeed)));
+            velocity.addY(getGravitySpeed(gameSpeed));
         }
     }
 
@@ -103,7 +104,7 @@ public final class Player extends Entity {
     }
 
     private float getGravitySpeed(float gameSpeed) {
-        return ACCELERATION.getY() * gameSpeed * getGame().getPanel().getHeight();
+        return ACCELERATION_Y * gameSpeed * getGame().getPanel().getHeight();
     }
 
     private float getObstacleSpeed(float gameSpeed) {
