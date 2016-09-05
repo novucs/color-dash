@@ -4,6 +4,7 @@ import net.novucs.colordash.state.ApplicationState;
 import net.novucs.colordash.state.RenderTask;
 import net.novucs.colordash.state.Snapshot;
 import net.novucs.colordash.state.game.GameRenderTask;
+import net.novucs.colordash.state.menu.MenuRenderTask;
 import net.novucs.colordash.util.BlockingReference;
 
 public class RenderThread extends Thread implements GameService {
@@ -43,22 +44,25 @@ public class RenderThread extends Thread implements GameService {
                 break;
             }
 
+            updateState(snapshot.getState());
             task.render(snapshot);
         }
     }
 
-    private void updateState(Snapshot snapshot) {
-        if (snapshot.getState() == state) {
+    private void updateState(ApplicationState newState) {
+        if (newState == state) {
             return;
         }
 
-        switch (state) {
+        switch (newState) {
             case GAME:
                 task = new GameRenderTask(game);
+                break;
             case MENU:
-
+                task = new MenuRenderTask(game);
+                break;
         }
 
-        state = snapshot.getState();
+        state = newState;
     }
 }

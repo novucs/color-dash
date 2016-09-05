@@ -19,6 +19,7 @@ public final class Player extends Entity {
 
     private float radius;
     private Vector2f velocity;
+    private Obstacle currentObstacle;
 
     public Player(ColorDash game, Vector2f location, float radius, Vector2f velocity) {
         super(game, location);
@@ -51,46 +52,72 @@ public final class Player extends Entity {
 
     private void checkInputs(float gameSpeed) {
         float xSpeed = ACCELERATION.getX() * gameSpeed * getGame().getPanel().getWidth();
-        float ySpeed = ACCELERATION.getY() * gameSpeed * getGame().getPanel().getHeight();
 
         switch (getGame().getPanel().getLastClickType()) {
             case LEFT:
-                setVelocity(getVelocity().add(-xSpeed, ySpeed));
+                setVelocity(getVelocity().add(-xSpeed, 0));
                 break;
             case RIGHT:
-                setVelocity(getVelocity().add(xSpeed, ySpeed));
+                setVelocity(getVelocity().add(xSpeed, 0));
                 break;
         }
     }
 
-    private Vector2f checkCollisions(float gameSpeed) {
+    private void checkCollisions(float gameSpeed) {
         MechanicsTask task = getGame().getMechanicsThread().getTask();
         if (!(task instanceof GameMechanicsTask)) {
-            return getNextLocation();
+            return;
         }
 
+        if (currentObstacle != null) {
+            if (intersectsX(getNextLocation(), currentObstacle)) {
+                setLocation(new Vector2f(getLocation().getX(), currentObstacle.getLocation().getY() - getRadius()));
+                setVelocity(new Vector2f(velocity.getX(), getObstacleSpeed(gameSpeed)));
+            } else {
+                currentObstacle = null;
+                setVelocity(new Vector2f(velocity.getX(), getGravitySpeed(gameSpeed)));
+            }
+            return;
+        }
+
+        currentObstacle = getIntersectingObstacle();
+
+        if (currentObstacle != null) {
+            setLocation(new Vector2f(getLocation().getX(), currentObstacle.getLocation().getY() - getRadius()));
+            setVelocity(new Vector2f(velocity.getX(), getObstacleSpeed(gameSpeed)));
+        } else {
+            setVelocity(velocity.add(0, getGravitySpeed(gameSpeed)));
+        }
+    }
+
+    private Obstacle getIntersectingObstacle() {
+        MechanicsTask task = getGame().getMechanicsThread().getTask();
         GameMechanicsTask gameTask = (GameMechanicsTask) task;
         Set<Obstacle> obstacles = ((Obstacle.Manager) gameTask.getEntityManagers().get(EntityType.OBSTACLE)).getObstacles();
-        Vector2f nextLocation = getNextLocation();
-
         for (Obstacle obstacle : obstacles) {
-            if (!intersectsX(nextLocation, obstacle) || !intersectsY(nextLocation, obstacle)) {
-                continue;
+            if (intersects(getNextLocation(), obstacle)) {
+                return obstacle;
             }
-
-            float ySpeed = Obstacle.getMoveSpeed() * gameSpeed * getGame().getPanel().getHeight();
-            setLocation(new Vector2f(getLocation().getX(), obstacle.getLocation().getY() - getRadius()));
-            setVelocity(new Vector2f(getVelocity().getX(), ySpeed));
-            return new Vector2f(nextLocation.getX(), obstacle.getLocation().getY() + ySpeed);
         }
+        return null;
+    }
 
-        return nextLocation;
+    private float getGravitySpeed(float gameSpeed) {
+        return ACCELERATION.getY() * gameSpeed * getGame().getPanel().getHeight();
+    }
+
+    private float getObstacleSpeed(float gameSpeed) {
+        return Obstacle.getMoveSpeed() * gameSpeed * getGame().getPanel().getHeight();
     }
 
     private Vector2f getNextLocation() {
         float x = clamp(getVelocity().getX() + getLocation().getX(), 0, getGame().getPanel().getWidth());
         float y = clamp(getVelocity().getY() + getLocation().getY(), 0, getGame().getPanel().getHeight());
         return new Vector2f(x, y);
+    }
+
+    private boolean intersects(Vector2f location, Obstacle obstacle) {
+        return intersectsX(location, obstacle) && intersectsY(location, obstacle);
     }
 
     private boolean intersectsX(Vector2f location, Obstacle obstacle) {
