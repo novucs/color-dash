@@ -84,6 +84,7 @@ public final class Player extends Entity {
         currentObstacle = getIntersectingObstacle();
 
         if (currentObstacle != null) {
+            ((GameMechanicsTask) task).incrementScore();
             location.setY(currentObstacle.getLocation().getY() - getRadius());
             velocity.setY(getObstacleSpeed(gameSpeed));
         } else {

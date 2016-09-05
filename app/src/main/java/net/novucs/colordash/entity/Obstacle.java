@@ -177,14 +177,6 @@ public final class Obstacle extends Entity {
             // Remove the obstacle if it is out of the screen range.
             if (obstacle.getLocation().getY() < -obstacle.getHeight()) {
                 it.remove();
-                attemptScore(obstacle);
-            }
-        }
-
-        private void attemptScore(Obstacle obstacle) {
-            MechanicsTask task = game.getMechanicsThread().getTask();
-            if (obstacle.isLeft() && task instanceof GameMechanicsTask) {
-                ((GameMechanicsTask) task).incrementScore();
             }
         }
 
