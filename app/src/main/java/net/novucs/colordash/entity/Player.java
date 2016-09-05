@@ -12,7 +12,7 @@ import java.util.Set;
 public final class Player extends Entity {
 
     // Default percentage radius of the player.
-    private static final float RADIUS = 0.03f;
+    private static final float RADIUS = 0.02f;
 
     // Acceleration of the player.
     private static final float ACCELERATION_X = 0.001f;
@@ -204,7 +204,7 @@ public final class Player extends Entity {
         public void initialize() {
             float x = game.getPanel().getWidth() / 2;
             float y = game.getPanel().getHeight() / 4;
-            float radius = game.getPanel().getWidth() * RADIUS;
+            float radius = game.getPanel().getHeight() * RADIUS;
             player = new Player(game, new Vector2f(x, y), radius, new Vector2f(0, 0));
         }
 

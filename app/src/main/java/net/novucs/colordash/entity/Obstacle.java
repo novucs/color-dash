@@ -8,8 +8,6 @@ import com.google.common.collect.ImmutableSet;
 import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.MechanicsThread;
 import net.novucs.colordash.math.Vector2f;
-import net.novucs.colordash.state.MechanicsTask;
-import net.novucs.colordash.state.game.GameMechanicsTask;
 
 import java.util.HashSet;
 import java.util.Iterator;
