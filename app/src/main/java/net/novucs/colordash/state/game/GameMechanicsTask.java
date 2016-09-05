@@ -16,14 +16,14 @@ import java.util.Map;
 
 public class GameMechanicsTask implements MechanicsTask {
 
-    // How much the game speed should be multiplied by each tick.
-    private static final float GAME_SPEED_MULTIPLIER = 1.0001f;
-
-    // The maximum speed the game can hit.
-    private static final float MAX_GAME_SPEED = 5;
-
     // The default game speed.
     private static final float DEFAULT_GAME_SPEED = 1;
+
+    // The maximum speed the game can hit.
+    private static final float MAX_GAME_SPEED = 4;
+
+    // Score required to reach the maximum game speed.
+    public static final float SCORE_TO_MAX_SPEED = 200;
 
     private final Map<EntityType, Entity.Manager> entityManagers = new EnumMap<>(EntityType.class);
     private final ColorDash game;
@@ -90,7 +90,7 @@ public class GameMechanicsTask implements MechanicsTask {
     @Override
     public void tick() {
         // Update the game speed.
-        gameSpeed = Math.min(MAX_GAME_SPEED, gameSpeed * GAME_SPEED_MULTIPLIER);
+        gameSpeed = Math.min((score / SCORE_TO_MAX_SPEED) * MAX_GAME_SPEED + DEFAULT_GAME_SPEED, MAX_GAME_SPEED);
 
         // Tick all entity managers.
         for (Entity.Manager manager : entityManagers.values()) {
