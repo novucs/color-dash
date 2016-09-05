@@ -10,7 +10,7 @@ import net.novucs.colordash.math.Vector2f;
 public abstract class Entity implements Tickable {
 
     private final ColorDash game;
-    protected Vector2f location;
+    private Vector2f location;
 
     public Entity(ColorDash game, Vector2f location) {
         this.game = game;

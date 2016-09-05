@@ -87,7 +87,7 @@ public final class Obstacle extends Entity {
     @Override
     public void tick(float gameSpeed) {
         float distance = getGame().getPanel().getHeight() * gameSpeed * MOVE_SPEED;
-        location.addY(distance);
+        getLocation().addY(distance);
     }
 
     @Override

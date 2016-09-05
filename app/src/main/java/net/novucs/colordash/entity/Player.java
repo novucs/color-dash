@@ -65,6 +65,35 @@ public final class Player extends Entity {
     }
 
     private void checkCollisions(float gameSpeed) {
+        checkObstacleCollisions(gameSpeed);
+        checkWallCollisions();
+    }
+
+    private void checkWallCollisions() {
+        Vector2f nextLocation = getNextLocation();
+        float maxX = getGame().getPanel().getWidth() - getRadius();
+        float minX = getRadius();
+        float maxY = getGame().getPanel().getHeight() - getRadius();
+        float minY = getRadius();
+
+        if (nextLocation.getX() > maxX) {
+            getVelocity().setX(maxX - getLocation().getX());
+        }
+
+        if (nextLocation.getX() < minX) {
+            getVelocity().setX(minX - getLocation().getX());
+        }
+
+        if (nextLocation.getY() > maxY) {
+            getVelocity().setY(maxY - getLocation().getY());
+        }
+
+        if (nextLocation.getY() < minY) {
+            getVelocity().setY(minY - getLocation().getY());
+        }
+    }
+
+    private void checkObstacleCollisions(float gameSpeed) {
         MechanicsTask task = getGame().getMechanicsThread().getTask();
         if (!(task instanceof GameMechanicsTask)) {
             return;
@@ -72,11 +101,11 @@ public final class Player extends Entity {
 
         if (currentObstacle != null) {
             if (intersectsX(getNextLocation(), currentObstacle)) {
-                location.setY(currentObstacle.getLocation().getY() - getRadius());
-                velocity.setY(getObstacleSpeed(gameSpeed));
+                getLocation().setY(currentObstacle.getLocation().getY() - getRadius());
+                getVelocity().setY(getObstacleSpeed(gameSpeed));
             } else {
                 currentObstacle = null;
-                velocity.setY(getGravitySpeed(gameSpeed));
+                getVelocity().setY(getGravitySpeed(gameSpeed));
             }
             return;
         }
@@ -85,10 +114,10 @@ public final class Player extends Entity {
 
         if (currentObstacle != null) {
             ((GameMechanicsTask) task).incrementScore();
-            location.setY(currentObstacle.getLocation().getY() - getRadius());
-            velocity.setY(getObstacleSpeed(gameSpeed));
+            getLocation().setY(currentObstacle.getLocation().getY() - getRadius());
+            getVelocity().setY(getObstacleSpeed(gameSpeed));
         } else {
-            velocity.addY(getGravitySpeed(gameSpeed));
+            getVelocity().addY(getGravitySpeed(gameSpeed));
         }
     }
 
@@ -113,8 +142,8 @@ public final class Player extends Entity {
     }
 
     private Vector2f getNextLocation() {
-        float x = clamp(getVelocity().getX() + getLocation().getX(), 0, getGame().getPanel().getWidth());
-        float y = clamp(getVelocity().getY() + getLocation().getY(), 0, getGame().getPanel().getHeight());
+        float x = getVelocity().getX() + getLocation().getX();
+        float y = getVelocity().getY() + getLocation().getY();
         return new Vector2f(x, y);
     }
 
@@ -127,7 +156,7 @@ public final class Player extends Entity {
         float aRight = getRadius() + aLeft;
         float bLeft = obstacle.getLocation().getX();
         float bRight = obstacle.getWidth() + bLeft;
-        return aLeft < bRight && aRight > bLeft;
+        return aLeft <= bRight && aRight >= bLeft;
     }
 
     private boolean intersectsY(Vector2f location, Obstacle obstacle) {
@@ -135,11 +164,7 @@ public final class Player extends Entity {
         float aBottom = getRadius() + aTop;
         float bTop = obstacle.getLocation().getY();
         float bBottom = obstacle.getHeight() + bTop;
-        return aTop < bBottom && aBottom > bTop;
-    }
-
-    private float clamp(float value, float min, float max) {
-        return Math.max(min, Math.min(value, max));
+        return aTop <= bBottom && aBottom >= bTop;
     }
 
     @Override
