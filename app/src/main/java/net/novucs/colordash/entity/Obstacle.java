@@ -29,7 +29,7 @@ public final class Obstacle extends Entity {
     private static final int COLOR_COUNT = 4;
 
     // All available colors obstacles can be.
-    private static final ImmutableList<Integer> COLORS = ImmutableList.of(
+    public static final ImmutableList<Integer> COLORS = ImmutableList.of(
             Color.parseColor("#FF0000"),
             Color.parseColor("#FF00EF"),
             Color.parseColor("#3FE0FF"),

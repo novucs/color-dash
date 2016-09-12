@@ -1,7 +1,12 @@
 package net.novucs.colordash;
 
+import net.novucs.colordash.state.ApplicationState;
 import net.novucs.colordash.state.MechanicsTask;
+import net.novucs.colordash.state.Snapshot;
 import net.novucs.colordash.state.game.GameMechanicsTask;
+import net.novucs.colordash.state.game.GameRenderTask;
+import net.novucs.colordash.state.menu.MenuMechanicsTask;
+import net.novucs.colordash.state.menu.MenuRenderTask;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +51,8 @@ public class MechanicsThread extends Thread implements GameService {
     @Override
     public void initialize() {
         start();
+        System.out.println("Yes hello!!");
+        task = new MenuMechanicsTask(game);
     }
 
     @Override
@@ -58,13 +65,15 @@ public class MechanicsThread extends Thread implements GameService {
         long tickStart;
         long tickDuration;
 
-        setup();
-
         while (!isInterrupted()) {
             tickStart = System.currentTimeMillis();
 
+            //updateState(task.snapshot());
+
             // Perform the game mechanics tick.
             task.tick();
+
+            //Snapshot snapshot = task.snapshot();
 
             // Pass current tick snapshot to render thread.
             game.getRenderThread().setSnapshot(task.snapshot());
@@ -79,16 +88,6 @@ public class MechanicsThread extends Thread implements GameService {
                 }
             }
         }
-
-        finish();
-    }
-
-    /**
-     * Data initialization on the mechanics thread before the game loop begins.
-     */
-    private void setup() {
-        task = new GameMechanicsTask(game);
-        ((GameMechanicsTask) task).setup();
     }
 
     /**

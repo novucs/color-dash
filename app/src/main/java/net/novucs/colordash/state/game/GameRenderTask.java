@@ -91,7 +91,7 @@ public class GameRenderTask implements RenderTask {
         }
     }
 
-    //Function that will render the bottom bar, score, and pause / unpause buttons.
+    //Function that will render the bottom bar, score, and trophey / unpause buttons.
     private void renderUI(Canvas canvas, int score) {
         float left = 0;
         float top = canvas.getHeight() * 0.95f;
