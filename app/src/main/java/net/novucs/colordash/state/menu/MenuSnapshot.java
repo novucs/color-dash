@@ -14,12 +14,12 @@ public class MenuSnapshot implements Snapshot {
     //Represents the current color of the play button
     private int playColor;
     //Represents the current color of the trophy
-    private int tropheyColor;
+    private int trophyColor;
 
-    public MenuSnapshot(ApplicationState state, int playColor, int tropheyColor) {
+    public MenuSnapshot(ApplicationState state, int playColor, int trophyColor) {
         this.state = state;
         this.playColor = playColor;
-        this.tropheyColor = tropheyColor;
+        this.trophyColor = trophyColor;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class MenuSnapshot implements Snapshot {
         return playColor;
     }
 
-    public int getTropheyColor() {
-        return tropheyColor;
+    public int getTrophyColor() {
+        return trophyColor;
     }
 
     /**
@@ -48,7 +48,7 @@ public class MenuSnapshot implements Snapshot {
 
         private ApplicationState state;
         private int playColor;
-        private int tropheyColor;
+        private int trophyColor;
 
         public Builder state(ApplicationState state) {
             this.state = state;
@@ -60,8 +60,8 @@ public class MenuSnapshot implements Snapshot {
             return this;
         }
 
-        public Builder tropheyColor(int tropheyColor) {
-            this.tropheyColor = tropheyColor;
+        public Builder trophyColor(int trophyColor) {
+            this.trophyColor = trophyColor;
             return this;
         }
 
@@ -86,7 +86,7 @@ public class MenuSnapshot implements Snapshot {
                 throw new IllegalStateException();
             }
 
-            return new MenuSnapshot(state, playColor, tropheyColor);
+            return new MenuSnapshot(state, playColor, trophyColor);
         }
     }
 }

@@ -18,7 +18,7 @@ public class MenuMechanicsTask implements MechanicsTask {
     //Int that keeps track of the color to render the play button.
     private int activeColor = 0;
     private int colorChangeCounter = 0;
-    private int tropheyColor = 2;
+    private int trophyColor = 2;
 
     //How many ticks we should change the color of our items on the screen.
     private static final int COLOR_CHANGE = 15;
@@ -44,7 +44,7 @@ public class MenuMechanicsTask implements MechanicsTask {
         colorChangeCounter++;
         if (colorChangeCounter == COLOR_CHANGE) {
             activeColor = MechanicsThread.getRandom().nextInt(colors.size() - 1);
-            tropheyColor = MechanicsThread.getRandom().nextInt(colors.size() - 1);
+            trophyColor = MechanicsThread.getRandom().nextInt(colors.size() - 1);
             colorChangeCounter = 0;
         }
     }
@@ -54,7 +54,7 @@ public class MenuMechanicsTask implements MechanicsTask {
         return MenuSnapshot.builder()
                 .state(ApplicationState.MENU)
                 .playColor(colors.get(activeColor))
-                .tropheyColor(colors.get(tropheyColor))
+                .trophyColor(colors.get(trophyColor))
                 .build();
     }
 }

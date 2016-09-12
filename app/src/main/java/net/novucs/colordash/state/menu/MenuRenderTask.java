@@ -9,7 +9,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.view.Menu;
 import android.view.SurfaceHolder;
 
 import net.novucs.colordash.ColorDash;
@@ -67,10 +66,10 @@ public class MenuRenderTask implements RenderTask {
     }
 
     public void drawTrophyButton(Canvas canvas, MenuSnapshot snapshot) {
-        Bitmap b = BitmapFactory.decodeResource(game.getResources(), R.drawable.trophey);
+        Bitmap b = BitmapFactory.decodeResource(game.getResources(), R.drawable.trophy);
         Bitmap resizedBitmap = getResizedBitmap(b, canvas.getWidth() / 4, canvas.getHeight() / 6);
 
-        ColorFilter filter = new PorterDuffColorFilter(snapshot.getTropheyColor(), PorterDuff.Mode.SRC_IN);
+        ColorFilter filter = new PorterDuffColorFilter(snapshot.getTrophyColor(), PorterDuff.Mode.SRC_IN);
         paint.setColorFilter(filter);
 
         float x = canvas.getWidth() * 0.20f;
