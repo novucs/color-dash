@@ -16,10 +16,13 @@ public class MenuSnapshot implements Snapshot {
     //Represents the current color of the trophy
     private int trophyColor;
 
-    public MenuSnapshot(ApplicationState state, int playColor, int trophyColor) {
+    private final ImmutableMultimap<EntityType, Entity.Snapshot> entities;
+
+    public MenuSnapshot(ApplicationState state, int playColor, int trophyColor, ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
         this.state = state;
         this.playColor = playColor;
         this.trophyColor = trophyColor;
+        this.entities = entities;
     }
 
     @Override
@@ -33,6 +36,10 @@ public class MenuSnapshot implements Snapshot {
 
     public int getTrophyColor() {
         return trophyColor;
+    }
+
+    public ImmutableMultimap<EntityType, Entity.Snapshot> getEntities() {
+        return entities;
     }
 
     /**
@@ -49,6 +56,7 @@ public class MenuSnapshot implements Snapshot {
         private ApplicationState state;
         private int playColor;
         private int trophyColor;
+        ImmutableMultimap<EntityType, Entity.Snapshot> entities;
 
         public Builder state(ApplicationState state) {
             this.state = state;
@@ -62,6 +70,11 @@ public class MenuSnapshot implements Snapshot {
 
         public Builder trophyColor(int trophyColor) {
             this.trophyColor = trophyColor;
+            return this;
+        }
+
+        public Builder entities(ImmutableMultimap<EntityType, Entity.Snapshot> entities) {
+            this.entities = entities;
             return this;
         }
 
@@ -86,7 +99,7 @@ public class MenuSnapshot implements Snapshot {
                 throw new IllegalStateException();
             }
 
-            return new MenuSnapshot(state, playColor, trophyColor);
+            return new MenuSnapshot(state, playColor, trophyColor, entities);
         }
     }
 }

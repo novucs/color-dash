@@ -50,9 +50,9 @@ public class MechanicsThread extends Thread implements GameService {
 
     @Override
     public void initialize() {
-        start();
-        System.out.println("Yes hello!!");
         task = new MenuMechanicsTask(game);
+        start();
+        ((MenuMechanicsTask) task).setup();
     }
 
     @Override

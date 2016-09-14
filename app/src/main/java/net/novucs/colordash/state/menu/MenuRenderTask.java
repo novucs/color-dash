@@ -13,13 +13,19 @@ import android.view.SurfaceHolder;
 
 import net.novucs.colordash.ColorDash;
 import net.novucs.colordash.R;
+import net.novucs.colordash.entity.Entity;
+import net.novucs.colordash.entity.EntityType;
+import net.novucs.colordash.entity.Obstacle;
 import net.novucs.colordash.state.RenderTask;
 import net.novucs.colordash.state.Snapshot;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class MenuRenderTask implements RenderTask {
 
     private final ColorDash game;
-    private final Paint paint = new Paint();
+    private static final Paint paint = new Paint();
 
     public MenuRenderTask(ColorDash game) {
         this.game = game;
@@ -43,6 +49,9 @@ public class MenuRenderTask implements RenderTask {
     }
 
     public void renderAll(Canvas canvas, MenuSnapshot snapshot) {
+        for (Map.Entry<EntityType, Collection<Entity.Snapshot>> entry : snapshot.getEntities().asMap().entrySet()) {
+            renderObstacles(canvas, entry.getValue());
+        }
         drawUI(canvas, snapshot);
     }
 
@@ -104,5 +113,37 @@ public class MenuRenderTask implements RenderTask {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    private void renderObstacles(Canvas canvas, Collection<Entity.Snapshot> obstacles) {
+        for (Entity.Snapshot entity : obstacles) {
+            renderObstacle(canvas, (Obstacle.Snapshot) entity);
+        }
+    }
+
+    private void renderObstacle(Canvas canvas, Obstacle.Snapshot obstacle) {
+        float left = obstacle.getLocation().getX();
+        float top = obstacle.getLocation().getY();
+        float right = left + obstacle.getWidth();
+        float bottom = top + obstacle.getHeight();
+
+        if (top < canvas.getHeight() * 0.75f && top > canvas.getHeight() * 0.30f) {
+            return;
+        }
+
+        paint.setColorFilter(null);
+        paint.setColor(obstacle.getColor());
+
+        if (obstacle.isLeft() && right != 0) {
+            float radius = obstacle.getHeight() / 2;
+            right -= radius;
+            canvas.drawCircle(right, (bottom + top) / 2, radius, paint);
+        } else if (!obstacle.isLeft() && left != game.getPanel().getWidth()) {
+            float radius = obstacle.getHeight() / 2;
+            left += radius;
+            canvas.drawCircle(left, (bottom + top) / 2, radius, paint);
+        }
+
+        canvas.drawRect(left, top, right, bottom, paint);
     }
 }

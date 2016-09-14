@@ -104,7 +104,7 @@ public class GameRenderTask implements RenderTask {
         //Draw in the score
         paint.setColor(Color.WHITE);
         paint.setTextSize(100.0f);
-        canvas.drawText("Score: " + score, left, canvas.getHeight() * 0.987f, paint);
+        canvas.drawText("Score: " + score, left, canvas.getHeight() * 0.98f, paint);
     }
 
     private void renderPlayer(Canvas canvas, Player.Snapshot player) {
