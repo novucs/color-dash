@@ -210,7 +210,6 @@ public final class Obstacle extends Entity {
                 colorCounter = 0;
                 current = 0;
             }
-            System.out.println(current);
             return COLORS.get(current);
         }
     }

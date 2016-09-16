@@ -72,6 +72,15 @@ public class MenuRenderTask implements RenderTask {
         float x = canvas.getWidth() * 0.65f;
         float y = canvas.getHeight() * 0.40f;
         canvas.drawBitmap(resizedBitmap, x, y, paint);
+
+        paint.setColor(snapshot.getPlayColor());
+        paint.setTextSize(resizedBitmap.getWidth() * 0.2f);
+
+
+        //For some reason our image is not proportional. I think that just has to do with my autism. I may need to readdress this later.
+        float endX = x + resizedBitmap.getWidth();
+        float middle = (x + endX) / 2;
+        canvas.drawText("Play", middle * 0.95f, y + resizedBitmap.getHeight() + (resizedBitmap.getHeight() * 0.5f), paint);
     }
 
     public void drawTrophyButton(Canvas canvas, MenuSnapshot snapshot) {
@@ -84,6 +93,11 @@ public class MenuRenderTask implements RenderTask {
         float x = canvas.getWidth() * 0.20f;
         float y = canvas.getHeight() * 0.40f;
         canvas.drawBitmap(resizedBitmap, x, y, paint);
+
+        paint.setColor(snapshot.getTrophyColor());
+        paint.setTextSize(resizedBitmap.getWidth() * 0.2f);
+
+        canvas.drawText("Leaderboards", x, y + resizedBitmap.getHeight() + (resizedBitmap.getHeight() * 0.5f), paint);
     }
 
     public void drawSettingsButton(Canvas canvas, MenuSnapshot snapshop) {
@@ -96,6 +110,13 @@ public class MenuRenderTask implements RenderTask {
         float x = canvas.getWidth() * 0.90f;
         float y = canvas.getHeight() * 0.90f;
         canvas.drawBitmap(resizedBitmap, x, y, paint);
+
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(resizedBitmap.getWidth() * 0.3f);
+
+        float endX = x + resizedBitmap.getWidth();
+        float middle = (x + endX) / 2;
+        canvas.drawText("Settings", middle * 0.94f, y + resizedBitmap.getHeight() + (resizedBitmap.getHeight() * 0.5f), paint);
     }
 
     public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
